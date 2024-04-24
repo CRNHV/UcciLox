@@ -21,10 +21,6 @@ So currently The `WinAPIFunc` class is kind of hardcoded for `MessageBoxA`
 ```csharp
 public object? Call(Interpreter interpreter, List<object> arguments)
 {
-    // The goal was to be able to call WinAPI functions without knowing what the
-    // Function signature looks like in advance. Turns out that's more difficult
-    // Than I thought, sad stuff. 
-
     nint nativeFunc = (nint)arguments[0];
     object[] args = arguments.Skip(1).ToArray();
 
