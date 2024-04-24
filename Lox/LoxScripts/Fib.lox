@@ -1,0 +1,17 @@
+﻿function fib(n) 
+{
+  if (n < 2)
+  {
+	return n;
+  }
+  return fib(n - 2) + fib(n - 1);
+}
+
+var start = clock();
+var fibTen = fib(10);
+var seconds = clock() - start;
+
+print("Calculated 10th fib number: " + fibTen);
+var fibEqual = fibTen == 55;
+print("10th fib == 55: " + fibEqual);
+print("It took: " + seconds / 1000 + "s to calculate the 10th number");

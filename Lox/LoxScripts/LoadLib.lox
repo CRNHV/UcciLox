@@ -1,0 +1,4 @@
+﻿var user32lib = GetModuleHandle("User32.dll");
+
+var msgBoxProc = GetProcAddress(user32lib, "MessageBoxA");
+WinAPIFunc(msgBoxProc, "Text", "Caption", 0);
