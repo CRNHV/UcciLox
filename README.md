@@ -13,7 +13,7 @@ WinAPIFunc(msgBoxProc, "Text", "Caption", 0);
 ```
 but this ideally would've been used for any function.
 
-In C# land we have to declare the function as a delegate and can't really build that dynamically:
+In C# land we have to declare the WinAPI function as a delegate and can't really build that dynamically:
 ```csharp
 delegate void NativeFunction(IntPtr handle, string text, string caption, int type);
 ```
