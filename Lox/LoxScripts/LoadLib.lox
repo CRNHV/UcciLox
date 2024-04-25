@@ -1,4 +1,9 @@
-﻿var user32lib = GetModuleHandle("User32.dll");
-var msgBoxProc = GetProcAddress(user32lib, "MessageBoxA");
+﻿var k32lib = GetModuleHandle("kernel32.dll");
 
-WinAPIFunc(msgBoxProc, "IntPtr",0 , "string", "Text", "string", "Caption", "uint", 0);
+var getCurrentProcessProc = GetProcAddress(k32lib, "GetCurrentProcess");
+var currentProcessHandle = WinAPIFunc(getCurrentProcessProc, "IntPtr");
+
+var user32lib = GetModuleHandle("User32.dll");
+var messageboxaproc = GetProcAddress(user32lib, "MessageBoxA");
+
+WinAPIFunc(messageboxaproc, "int", "IntPtr",0 , "string", "Text", "string", "Caption", "uint", 0);

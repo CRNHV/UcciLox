@@ -8,46 +8,67 @@ using System.Runtime.InteropServices;
 namespace UcciLox.Functions.BuiltIn;
 internal sealed class WinAPIFunc : ICallable
 {
+    [DllImport("kernel32.dll", SetLastError = true, ExactSpelling = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool GetModuleInformation(IntPtr hProcess, IntPtr hModule, out object lpmodinfo, uint cb);
+
     int ICallable.Arity => 0;
 
     public object? Call(Interpreter interpreter, List<object> arguments)
     {
         var delegateArgs = new List<object>();
-
-        var passedArguments = arguments.Skip(1).ToArray();
+        IntPtr functionPtr = (nint)arguments[0];
+        var returnTypeString = (string)arguments[1];
         List<Type> paramTypes = new List<Type>();
+        Type returnType = null;
+
+        switch (returnTypeString)
+        {
+            case "IntPtr":
+                returnType = typeof(IntPtr);
+                break;
+            case "int":
+                returnType = typeof(int);
+                break;
+            case "bool":
+                returnType = typeof(bool);
+                break;
+        }
+
+        var passedArguments = arguments.Skip(2).ToArray();
 
         for (int i = 0; i < passedArguments.Length; i++)
         {
             var argType = passedArguments[i];
-            var actualArg = passedArguments[i + 1];
+            var argValue = passedArguments[i + 1];
 
             if (argType.Equals("IntPtr"))
             {
-                if (actualArg.Equals((double)0))
+                paramTypes.Add(typeof(IntPtr));
+
+                if (argValue.Equals((double)0))
                 {
                     delegateArgs.Add((object)IntPtr.Zero);
-                    paramTypes.Add(typeof(IntPtr));
+
+                }
+                else
+                {
+                    delegateArgs.Add((IntPtr)argValue);
                 }
             }
-
-            if (argType.Equals("string"))
+            else if (argType.Equals("string"))
             {
-                delegateArgs.Add((string)actualArg);
+                delegateArgs.Add((string)argValue);
                 paramTypes.Add(typeof(string));
             }
-
-            if (argType.Equals("uint"))
+            else if (argType.Equals("uint"))
             {
-                delegateArgs.Add(Convert.ToUInt32(actualArg));
+                delegateArgs.Add(Convert.ToUInt32(argValue));
                 paramTypes.Add(typeof(uint));
             }
 
             i += 1;
         }
-
-        IntPtr functionPtr = (nint)arguments[0];
-        Type returnType = typeof(int);
 
         // Create the dynamic delegate type
         Type delegateType = CreateDynamicDelegateType(paramTypes.ToArray(), returnType);
